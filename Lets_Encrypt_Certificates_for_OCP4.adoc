@@ -4,7 +4,7 @@
 
 For any OpenShift cluster it is suggested to use proper certificates to secure the routes and API endpoints.
 
-In OpenShift 3 certificates are usually added during the installation process by modifying the `/etc/hosts` file. In OpenShift 4 however there is no mechanism to provide certificates during the installation process. Addind certificates is configured a post-installation task.
+In OpenShift 3 certificates are usually added during the installation process by modifying the `/etc/hosts` file. In OpenShift 4 however there is no mechanism to provide certificates during the installation process. Adding certificates is considered a post-installation task.
 
 Luckily in OpenShift 4 it is very easy to apply certificates after the installation has completed.
 
@@ -12,7 +12,7 @@ This document walks through using *Let's Encrypt* to provision certificates for 
 
 == Installing acme.sh
 
-If you already have certificates for your domains you may skip this step.
+If you already have certificates for your domains you may skip this step and go straight to <<installing>>.
 
 In order to request Let's Encrypt certificates we will use the *acme.sh* client. This client makes it very easy to request and update certificates.
 
@@ -39,6 +39,8 @@ AWS_ACCESS_KEY_ID="YOUR ACCESS KEY"
 AWS_SECRET_ACCESS_KEY="YOUR SECRET ACCESS KEY"
 
 #This is the Amazon Route53 api wrapper for acme.sh
+
+[...]
 ----
 
 == Requesting Certificates
@@ -85,6 +87,7 @@ ${HOME}/acme.sh/acme.sh --issue -d ${LE_API} -d *.${LE_WILDCARD} --dns dns_aws
 ${HOME}/acme.sh/acme.sh --install-cert -d ${LE_API} -d *.${LE_WILDCARD} --cert-file ${HOME}/certificates/cert.pem --key-file ${HOME}/certificates/key.pem --fullchain-file ${HOME}/certificates/fullchain.pem --ca-file ${HOME}/certificates/ca.cer"
 ----
 
+[[installing]]
 == Installing Certificates for the Router
 
 The Router expects the certificates in a `Secret`. This secret needs to be created in the project `openshift-ingress`.
