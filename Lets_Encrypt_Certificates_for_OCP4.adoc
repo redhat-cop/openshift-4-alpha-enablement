@@ -4,7 +4,7 @@
 
 For any OpenShift cluster it is suggested to use proper certificates to secure the routes and API endpoints.
 
-In OpenShift 3 certificates are usually added during the installation process by modifying the `/etc/hosts` file. In OpenShift 4 however there is no mechanism to provide certificates during the installation process. Adding certificates is considered a post-installation task.
+In OpenShift 3 certificates are usually added during the installation process by modifying the `/etc/ansible/hosts` file. In OpenShift 4 however there is no mechanism to provide certificates during the installation process. Adding certificates is considered a post-installation task.
 
 Luckily in OpenShift 4 it is very easy to apply certificates after the installation has completed.
 
