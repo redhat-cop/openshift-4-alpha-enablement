@@ -84,7 +84,7 @@ ${HOME}/acme.sh/acme.sh --issue -d ${LE_API} -d *.${LE_WILDCARD} --dns dns_aws
 +
 [source,sh]
 ----
-${HOME}/acme.sh/acme.sh --install-cert -d ${LE_API} -d *.${LE_WILDCARD} --cert-file ${HOME}/certificates/cert.pem --key-file ${HOME}/certificates/key.pem --fullchain-file ${HOME}/certificates/fullchain.pem --ca-file ${HOME}/certificates/ca.cer"
+${HOME}/acme.sh/acme.sh --install-cert -d ${LE_API} -d *.${LE_WILDCARD} --cert-file ${HOME}/certificates/cert.pem --key-file ${HOME}/certificates/key.pem --fullchain-file ${HOME}/certificates/fullchain.pem --ca-file ${HOME}/certificates/ca.cer
 ----
 
 [[installing]]
