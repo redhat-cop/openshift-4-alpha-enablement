@@ -28,7 +28,7 @@ metadata:
 spec:
   projectRequestMessage: "You requested a new project"
   projectRequestTemplate:
-    name: "openshift-config/project-request"' | oc create -n openshift-config -f -
+    name: "project-request"' | oc create -n openshift-config -f -
 ----
 
 . Create a new project and validate that your changes have been applied.
