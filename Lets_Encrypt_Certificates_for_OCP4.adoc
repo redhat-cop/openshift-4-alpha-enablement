@@ -112,8 +112,4 @@ oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --
 
 . This is all you need to do. After you update the IngressController object the OpenShift ingress operator notices that the custom resource has changed and therefore re-deploys the router.
 
-. You now have proper certificates on the router - and this includes both custom applications as well as the Web Console for your OpenShift Cluster.
-
-== Installing Certificates for the API Endpoint
-
-This will be added in a later version of this document.
+. You now have proper certificates on the router - and this includes custom applications, the Web Console for your OpenShift Cluster and the API Endpoint.
