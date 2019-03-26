@@ -45,7 +45,7 @@ AWS_SECRET_ACCESS_KEY="YOUR SECRET ACCESS KEY"
 
 == Requesting Certificates
 
-. To make things a bit easier set two environment variables. The first variable should point to your API Endpoint. Use the `oc` CLI to find the API Endpoint URL.
+. To make things a bit easier set two environment variables. The first variable should point to your API Endpoint. Make sure you are logged into OpenShift as `system:admin` and use the `oc` CLI to find the API Endpoint URL.
 +
 [source,sh]
 ----
@@ -62,14 +62,14 @@ https://cluster-e954-api.e954.ocp4.opentlc.com:6443
 +
 [source,sh]
 ----
-export LE_API=cluster-e954-api.e954.ocp4.opentlc.com
+export LE_API=$(oc whoami --show-server | cut -f 2 -d ':' | cut -f 3 -d '/' | sed 's/-api././')
 ----
 
 . Set the second variable LE_WILDCARD to your Wildcard Domain for example:
 +
 [source,sh]
 ----
-export LE_WILDCARD=apps.cluster-e954.e954.ocp4.opentlc.com
+export LE_WILDCARD=$(oc get route console -n openshift-console -o jsonpath='{.spec.host}'|cut -f 2- -d '.')
 ----
 
 . Run the acme.sh script
@@ -84,11 +84,15 @@ ${HOME}/acme.sh/acme.sh --issue -d ${LE_API} -d *.${LE_WILDCARD} --dns dns_aws
 +
 [source,sh]
 ----
-${HOME}/acme.sh/acme.sh --install-cert -d ${LE_API} -d *.${LE_WILDCARD} --cert-file ${HOME}/certificates/cert.pem --key-file ${HOME}/certificates/key.pem --fullchain-file ${HOME}/certificates/fullchain.pem --ca-file ${HOME}/certificates/ca.cer
+export CERTDIR=$HOME/certificates
+mkdir -p ${CERTDIR}
+${HOME}/acme.sh/acme.sh --install-cert -d ${LE_API} -d *.${LE_WILDCARD} --cert-file ${CERTDIR}/cert.pem --key-file ${CERTDIR}/key.pem --fullchain-file ${CERTDIR}/fullchain.pem --ca-file ${CERTDIR}/ca.cer
 ----
 
 [[installing]]
 == Installing Certificates for the Router
+
+The following instructions work for OpenShift 4.0.0.8 (Installer 0.15) and higher.
 
 The Router expects the certificates in a `Secret`. This secret needs to be created in the project `openshift-ingress`.
 
@@ -96,18 +100,17 @@ The Router expects the certificates in a `Secret`. This secret needs to be creat
 +
 [source,sh]
 ----
-oc create secret generic router-certs --from-file=tls.crt=${HOME}/certificates/fullchain.pem --from-file=tls.key=${HOME}/certificates/key.pem -n openshift-ingress
+oc create secret tls router-certs --cert=${CERTDIR}/fullchain.pem --key=${CERTDIR}/key.pem -n openshift-ingress
 ----
 
-. Now update the Custom Resource for your router. The default custom resource is of type `ClusterIngress`, is named `default` and is located in the `openshift-ingress-operator` project. Note that this project is different from where you created the secret earlier.
-
+. Now update the Custom Resource for your router. The default custom resource is of type `IngressController`, is named `default` and is located in the `openshift-ingress-operator` project. Note that this project is different from where you created the secret earlier.
 +
 [source,sh]
 ----
-oc patch clusteringress default -n openshift-ingress-operator --patch='{"spec": { "defaultCertificateSecret": "router-certs" }}' --type=merge
+oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --patch='{"spec": { "defaultCertificate": { "name": "router-certs" }}}'
 ----
 
-. This is all you need to do. After you update the ClusterIngress object the OpenShift ingress operator notices that the custom resource has changed and therefore re-deploys the router.
+. This is all you need to do. After you update the IngressController object the OpenShift ingress operator notices that the custom resource has changed and therefore re-deploys the router.
 
 . You now have proper certificates on the router - and this includes both custom applications as well as the Web Console for your OpenShift Cluster.
 
