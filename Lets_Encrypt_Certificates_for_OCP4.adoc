@@ -69,7 +69,7 @@ export LE_API=$(oc whoami --show-server | cut -f 2 -d ':' | cut -f 3 -d '/' | se
 +
 [source,sh]
 ----
-export LE_WILDCARD=$(oc get route console -n openshift-console -o jsonpath='{.spec.host}'|cut -f 2- -d '.')
+export LE_WILDCARD=$(oc get clusteringress default -n openshift-ingress-operator -o jsonpath='{.status.ingressDomain}')
 ----
 
 . Run the acme.sh script
